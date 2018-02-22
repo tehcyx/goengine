@@ -1,5 +1,5 @@
 FROM scratch
 
-ADD goenginedocker /
+ADD bin/appdocker /
 
-CMD ["/goenginedocker"]
+CMD ["/appdocker"]
