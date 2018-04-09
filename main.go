@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"math"
+	"os"
 	"runtime"
 	"time"
 
@@ -72,14 +73,16 @@ func main() {
 		sdl.WINDOWPOS_UNDEFINED,
 		winWidth, winHeight, sdl.WINDOW_OPENGL)
 	if err != nil {
+		fmt.Fprintf(os.Stderr, "Failed to create window: %s\n", err)
 		panic(err)
 	}
 	defer window.Destroy()
-	context, err = sdl.GLCreateContext(window)
+	context, err = sdl.GL_CreateContext(window)
 	if err != nil {
+		fmt.Fprintf(os.Stderr, "Failed to create context: %s\n", err)
 		panic(err)
 	}
-	defer sdl.GLDeleteContext(context)
+	defer sdl.GL_DeleteContext(context)
 
 	gl.Init()
 	gl.Viewport(0, 0, gl.Sizei(winWidth), gl.Sizei(winHeight))
@@ -127,20 +130,31 @@ func main() {
 
 	running = true
 	for running {
-		for event = sdl.PollEvent(); event != nil; event =
-			sdl.PollEvent() {
+		for event = sdl.PollEvent(); event != nil; event = sdl.PollEvent() {
 			switch t := event.(type) {
 			case *sdl.QuitEvent:
 				running = false
+			case *sdl.KeyUpEvent:
+				if t.Keysym.Sym == sdl.K_ESCAPE {
+					running = false
+				}
+			case *sdl.MouseButtonEvent:
+				if t.Type == sdl.MOUSEBUTTONUP {
+					if t.Button == sdl.BUTTON_LEFT {
+						fmt.Printf("Left Mouse %d\n", 1)
+					} else if t.Button == sdl.BUTTON_RIGHT {
+						fmt.Printf("Right Mouse %d\n", 1)
+					}
+				}
 			case *sdl.MouseMotionEvent:
 
 				xrot = float32(t.Y) / 2
 				yrot = float32(t.X) / 2
-				fmt.Printf("[%dms]MouseMotion \tid:%d \tx:%d \ty:%d \txrel:%d \tyrel:%d\n", t.Timestamp, t.Which, t.X, t.Y, t.XRel, t.YRel)
+				//fmt.Printf("[%dms]MouseMotion \tid:%d \tx:%d \ty:%d \txrel:%d \tyrel:%d\n", t.Timestamp, t.Which, t.X, t.Y, t.XRel, t.YRel)
 			}
 		}
 		drawgl()
-		sdl.GLSwapWindow(window)
+		sdl.GL_SwapWindow(window)
 	}
 }
 
