@@ -26,8 +26,11 @@ Look into this: https://github.com/raedatoui/learn-opengl-golang
 3. Install SDL2 via brew: `brew install sdl2{,_image,_ttf,_mixer} pkg-config`
 4. run `make`
 5. run `./bin/app`
+
 # Future plans (in no particular order)
 
+- Document way to cross-compile for windows
+- Document way to cross-compile for linux
 - Use fonts for UI:
     - http://www.dafont.com/5x5-square.font
     - http://www.dafont.com/5x5-rounded.font
