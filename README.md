@@ -1,6 +1,20 @@
 # goengine
 golang voxel engine
 
+The goal here is to create a graphics engine in the style of minecraft, with total control of terrain generation. For starters the goal currently is not to have destructible terrain. It should be usable as a basis for participation in GameJams.
+Along the way I want to learn:
+1. Mesh generation/handling/modification
+2. Terrain generation
+3. FPS & 3rd person camera
+4. ...
+5. ...
+6. networking support for multiplayer
+
+# Immediate next tasks
+- [ ] Meshing
+- [ ] OBJ loader
+- [ ] MagicaVoxel imports
+
 Look into this: https://github.com/raedatoui/learn-opengl-golang
 
 # How to contribute
@@ -12,9 +26,6 @@ Look into this: https://github.com/raedatoui/learn-opengl-golang
 ...
 
 ## Compile & run
-...
-
-## Cross compile macOS to Windows
 1. Install [Homebrew](https://brew.sh/)
 2. Install go dependencies
 
@@ -27,18 +38,8 @@ Look into this: https://github.com/raedatoui/learn-opengl-golang
 4. run `make`
 5. run `./bin/app`
 
-# Future plans (in no particular order)
+## Cross compile MacOs to Windows
+...
 
-- Document way to cross-compile for windows
-- Document way to cross-compile for linux
-- Use fonts for UI:
-    - http://www.dafont.com/5x5-square.font
-    - http://www.dafont.com/5x5-rounded.font
-- Implement proper mesh rendering
-- Implement chunk handling
-- Implement terrain generation
-    - Restrict terrain to be more of a desert style
-- Character models
-    - Customization
-- Items
-    - stat system
+## Cross compile MacOs to Linux
+...
