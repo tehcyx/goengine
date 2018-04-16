@@ -135,8 +135,6 @@ func main() {
 
 	gl.UseProgram(program)
 
-	gl.UseProgram(program)
-
 	projection := mgl32.Perspective(mgl32.DegToRad(45.0), float32(winWidth)/winHeight, 0.1, 150.0)
 	projectionUniform := gl.GetUniformLocation(program, gl.Str("projection\x00"))
 	gl.UniformMatrix4fv(projectionUniform, 1, false, &projection[0])
@@ -157,8 +155,8 @@ func main() {
 	monkeyModel := mesh.NewMeshFromFile("res/models/monkey.obj")
 
 	// Configure global settings
-	// gl.Enable(gl.DEPTH_TEST)
-	// gl.DepthFunc(gl.LESS)
+	gl.Enable(gl.DEPTH_TEST)
+	gl.DepthFunc(gl.LESS)
 	gl.ClearColor(0.2, 0.8, 0.8, 1.0)
 
 	running = true

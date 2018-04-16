@@ -67,22 +67,22 @@ func (m *Mesh) init(model *obj.IndexedModel) {
 	gl.GenBuffers(int32(NUM_BUFFERS), &m.vbo[0])
 
 	gl.BindBuffer(gl.ARRAY_BUFFER, m.vbo[POSITION_VB])
-	gl.BufferData(gl.ARRAY_BUFFER, len(m.model.Positions)*4, gl.Ptr(m.model.Positions), gl.STATIC_DRAW) // *4 because  float32 is 4 bytes
-	gl.EnableVertexAttribArray(0)
+	gl.BufferData(gl.ARRAY_BUFFER, len(m.model.Positions)*3*4, gl.Ptr(m.model.Positions), gl.STATIC_DRAW) // *4 because  float32 is 4 bytes
+	gl.EnableVertexAttribArray(uint32(POSITION_VB))
 	gl.VertexAttribPointer(uint32(POSITION_VB), 3, gl.FLOAT, false, 0, gl.PtrOffset(0))
 
 	gl.BindBuffer(gl.ARRAY_BUFFER, m.vbo[TEXCOORD_VB])
-	gl.BufferData(gl.ARRAY_BUFFER, len(m.model.TexCoords)*4, gl.Ptr(m.model.TexCoords), gl.STATIC_DRAW)
-	gl.EnableVertexAttribArray(0)
+	gl.BufferData(gl.ARRAY_BUFFER, len(m.model.TexCoords)*2*4, gl.Ptr(m.model.TexCoords), gl.STATIC_DRAW)
+	gl.EnableVertexAttribArray(uint32(TEXCOORD_VB))
 	gl.VertexAttribPointer(uint32(TEXCOORD_VB), 2, gl.FLOAT, false, 0, gl.PtrOffset(0))
 
 	gl.BindBuffer(gl.ARRAY_BUFFER, m.vbo[NORMAL_VB])
-	gl.BufferData(gl.ARRAY_BUFFER, len(m.model.Normals)*4, gl.Ptr(m.model.Normals), gl.STATIC_DRAW)
-	gl.EnableVertexAttribArray(0)
+	gl.BufferData(gl.ARRAY_BUFFER, len(m.model.Normals)*3*4, gl.Ptr(m.model.Normals), gl.STATIC_DRAW)
+	gl.EnableVertexAttribArray(uint32(NORMAL_VB))
 	gl.VertexAttribPointer(uint32(NORMAL_VB), 3, gl.FLOAT, false, 0, gl.PtrOffset(0))
 
-	gl.BindBuffer(gl.ELEMENT_ARRAY_BUFFER, m.vbo[INDEX_VB])
-	gl.BufferData(gl.ELEMENT_ARRAY_BUFFER, len(m.model.Indices)*4, gl.Ptr(m.model.Indices), gl.STATIC_DRAW)
+	gl.BindBuffer(gl.ELEMENT_ARRAY_BUFFER, m.vbo[NORMAL_VB])
+	gl.BufferData(gl.ELEMENT_ARRAY_BUFFER, len(m.model.Indices)*3*4, gl.Ptr(m.model.Indices), gl.STATIC_DRAW)
 
 	gl.BindVertexArray(0)
 }
