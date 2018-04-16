@@ -16,7 +16,7 @@ Along the way I want to learn:
 - Create an [issue](https://github.com/tehcyx/goengine/issues)
 
 ## What does it look like
-![Mesh 01](screenshots/mesh01.png)
+![Mesh 01](screenshots/mesh02.png)
 
 # Immediate next tasks
 
