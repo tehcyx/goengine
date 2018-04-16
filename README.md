@@ -11,8 +11,13 @@ Along the way I want to learn:
 6. networking support for multiplayer
 
 # Immediate next tasks
-- [ ] Meshing
-- [ ] OBJ loader
+
+- [X] Meshing
+- [X] OBJ loader
+- [ ] Figure out why the drawing is not working from the Mesh
+- [ ] Change to my window code
+- [ ] Use mouse to rotate camera eventually?
+- [ ] Test if windows binary is still working
 - [ ] MagicaVoxel imports
 
 Look into this: https://github.com/raedatoui/learn-opengl-golang
@@ -23,9 +28,11 @@ Look into this: https://github.com/raedatoui/learn-opengl-golang
 - Create an [issue](https://github.com/tehcyx/goengine/issues)
 
 ### Pre requisites
+
 ...
 
 ## Compile & run
+
 1. Install [Homebrew](https://brew.sh/)
 2. Install go dependencies
 
@@ -39,7 +46,9 @@ Look into this: https://github.com/raedatoui/learn-opengl-golang
 5. run `./bin/app`
 
 ## Cross compile MacOs to Windows
+
 ...
 
 ## Cross compile MacOs to Linux
+
 ...
