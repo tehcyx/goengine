@@ -28,7 +28,6 @@ type Mesh struct {
 
 func NewMesh() *Mesh {
 	m := new(Mesh)
-	//m.create()
 	return m
 }
 

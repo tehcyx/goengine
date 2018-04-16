@@ -87,19 +87,19 @@ func (o *ObjModel) ToIndexedModel() *IndexedModel {
 	indexMap = make(map[int]int)
 
 	for i := 0; i < len(o.Indices); i++ {
-		currentIndex := &o.Indices[i]
-		var currentPosition mgl32.Vec3
+		currentIndex := o.Indices[i]
+		currentPosition := o.Vertices[currentIndex.VertexIndex-1]
 		var currentTexCoord mgl32.Vec2
 		var currentNormal mgl32.Vec3
 
 		if o.HasUVs() {
-			currentTexCoord = o.UVs[currentIndex.UVIndex]
+			currentTexCoord = o.UVs[currentIndex.UVIndex-1]
 		} else {
 			currentTexCoord = mgl32.Vec2{0.0, 0.0}
 		}
 
 		if o.HasNormals() {
-			currentNormal = o.Normals[currentIndex.NormalIndex]
+			currentNormal = o.Normals[currentIndex.NormalIndex-1]
 		} else {
 			currentNormal = mgl32.Vec3{0.0, 0.0, 0.0}
 		}
@@ -108,10 +108,10 @@ func (o *ObjModel) ToIndexedModel() *IndexedModel {
 		var resultModelIndex int
 
 		//Create model to properly generate Normals on
-		if val, ok := normalModelIndexMap[*currentIndex]; ok {
+		if val, ok := normalModelIndexMap[currentIndex]; ok {
 			normalModelIndex = int(val)
 
-			normalModelIndexMap[*currentIndex] = normalModelIndex
+			normalModelIndexMap[currentIndex] = normalModelIndex
 			normalModel.Positions = append(normalModel.Positions, currentPosition)
 			normalModel.TexCoords = append(normalModel.TexCoords, currentTexCoord)
 			normalModel.Normals = append(normalModel.Normals, currentNormal)
@@ -120,7 +120,7 @@ func (o *ObjModel) ToIndexedModel() *IndexedModel {
 		}
 
 		//Create model which properly separates texture coordinates
-		previousVertexLocation := o.findLastVertexIndex(indexLookup, *currentIndex, result)
+		previousVertexLocation := o.findLastVertexIndex(indexLookup, currentIndex, result)
 
 		if previousVertexLocation == -1 {
 			resultModelIndex = len(result.Positions)
@@ -252,50 +252,18 @@ func (o *ObjModel) CreateFace(line string) {
 }
 
 func parseVec2(line string) mgl32.Vec2 {
-	vertexIndexStart := 3
-
-	for vertexIndexStart < len(line) {
-		if string(line[vertexIndexStart]) != " " {
-			break
-		}
-		vertexIndexStart++
-	}
-
-	vertexIndexEnd := findNextChar(vertexIndexStart, line, " ")
-
-	x := parseFloatValue(line, vertexIndexStart, vertexIndexEnd)
-
-	vertexIndexStart = vertexIndexEnd + 1
-	vertexIndexEnd = findNextChar(vertexIndexStart, line, " ")
-
-	y := parseFloatValue(line, vertexIndexStart, vertexIndexEnd+1)
+	tokens := strings.Split(line, " ")
+	x := parseFloatValue(tokens[1])
+	y := parseFloatValue(tokens[2])
 
 	return mgl32.Vec2{x, y}
 }
 
 func parseVec3(line string) mgl32.Vec3 {
-	vertexIndexStart := 2
-
-	for vertexIndexStart < len(line) {
-		if string(line[vertexIndexStart]) != " " {
-			break
-		}
-		vertexIndexStart++
-	}
-
-	vertexIndexEnd := findNextChar(vertexIndexStart, line, " ")
-
-	x := parseFloatValue(line, vertexIndexStart, vertexIndexEnd)
-
-	vertexIndexStart = vertexIndexEnd + 1
-	vertexIndexEnd = findNextChar(vertexIndexStart, line, " ")
-
-	y := parseFloatValue(line, vertexIndexStart, vertexIndexEnd)
-
-	vertexIndexStart = vertexIndexEnd + 1
-	vertexIndexEnd = findNextChar(vertexIndexStart, line, " ")
-
-	z := parseFloatValue(line, vertexIndexStart, vertexIndexEnd+1)
+	tokens := strings.Split(line, " ")
+	x := parseFloatValue(tokens[1])
+	y := parseFloatValue(tokens[2])
+	z := parseFloatValue(tokens[3])
 
 	return mgl32.Vec3{x, y, z}
 }
@@ -303,31 +271,15 @@ func parseVec3(line string) mgl32.Vec3 {
 func (o *ObjModel) parseIndex(token string) ObjectIndex {
 	var result ObjectIndex
 
-	vertexIndexStart := 0
-	vertexIndexEnd := findNextChar(vertexIndexStart, token, "/")
+	tokens := strings.Split(token, "/")
 
-	result.VertexIndex = parseIndexValue(token, vertexIndexStart, vertexIndexEnd)
+	result.VertexIndex = parseIndexValue(tokens[0])
 	result.UVIndex = 0
 	result.NormalIndex = 0
-
-	if vertexIndexEnd >= len(token) {
-		return result
+	if len(tokens) > 1 {
+		result.UVIndex = parseIndexValue(tokens[1])
+		result.NormalIndex = parseIndexValue(tokens[2])
 	}
-
-	vertexIndexStart = vertexIndexEnd + 1
-	vertexIndexEnd = findNextChar(vertexIndexStart, token, "/")
-
-	result.UVIndex = parseIndexValue(token, vertexIndexStart, vertexIndexEnd)
-
-	if vertexIndexEnd >= len(token) {
-		return result
-	}
-
-	vertexIndexStart = vertexIndexEnd + 1
-	vertexIndexEnd = findNextChar(vertexIndexStart, token, "/")
-
-	result.NormalIndex = parseIndexValue(token, vertexIndexStart, vertexIndexEnd)
-
 	return result
 }
 
@@ -343,13 +295,13 @@ func findNextChar(start int, token, find string) int {
 	return result
 }
 
-func parseIndexValue(token string, vertexIndexStart, vertexIndexEnd int) int {
-	res, _ := strconv.Atoi(token[vertexIndexStart:vertexIndexEnd])
+func parseIndexValue(token string) int {
+	res, _ := strconv.Atoi(token)
 	return res
 }
 
-func parseFloatValue(token string, vertexIndexStart, vertexIndexEnd int) float32 {
-	res, _ := strconv.ParseFloat(token[vertexIndexStart:vertexIndexEnd], 32)
+func parseFloatValue(token string) float32 {
+	res, _ := strconv.ParseFloat(token, 32)
 	return float32(res)
 }
 

@@ -80,7 +80,7 @@ var xrot float32
 
 func main() {
 
-	printBanner()
+	// printBanner()
 
 	var window *sdl.Window
 	var context sdl.GLContext
@@ -135,11 +135,11 @@ func main() {
 
 	gl.UseProgram(program)
 
-	projection := mgl32.Perspective(mgl32.DegToRad(45.0), float32(winWidth)/winHeight, 0.1, 150.0)
+	projection := mgl32.Perspective(mgl32.DegToRad(45.0), float32(winWidth)/winHeight, 0.1, 10.0)
 	projectionUniform := gl.GetUniformLocation(program, gl.Str("projection\x00"))
 	gl.UniformMatrix4fv(projectionUniform, 1, false, &projection[0])
 
-	camera := mgl32.LookAtV(mgl32.Vec3{100, 100, 100}, mgl32.Vec3{0, 0, 0}, mgl32.Vec3{0, 1, 0})
+	camera := mgl32.LookAtV(mgl32.Vec3{3, 3, 3}, mgl32.Vec3{0, 0, 0}, mgl32.Vec3{0, 1, 0})
 	cameraUniform := gl.GetUniformLocation(program, gl.Str("camera\x00"))
 	gl.UniformMatrix4fv(cameraUniform, 1, false, &camera[0])
 
@@ -154,10 +154,40 @@ func main() {
 
 	monkeyModel := mesh.NewMeshFromFile("res/models/monkey.obj")
 
+	// // Configure the vertex data
+	// var vao uint32
+	// gl.GenVertexArrays(1, &vao)
+	// gl.BindVertexArray(vao)
+
+	// // monkeyModelObj := obj.NewObjModelFromFile("res/models/monkey.obj")
+	// monkeyModelObj := obj.NewObjModelFromFile("res/models/monkey.obj").ToIndexedModel()
+
+	// var indices []int
+	// for i := 0; i < len(monkeyModelObj.Indices); i++ {
+	// 	// indices = append(indices, monkeyModelObj.Indices[i].VertexIndex)
+	// 	indices = append(indices, monkeyModelObj.Indices[i])
+	// }
+
+	// var vbo uint32
+	// var ebo uint32
+	// gl.GenBuffers(1, &vbo)
+	// gl.GenBuffers(1, &ebo)
+	// gl.BindBuffer(gl.ARRAY_BUFFER, vbo)
+	// // gl.BufferData(gl.ARRAY_BUFFER, len(monkeyModelObj.Vertices)*3*4, gl.Ptr(monkeyModelObj.Vertices), gl.STATIC_DRAW)
+	// gl.BufferData(gl.ARRAY_BUFFER, len(monkeyModelObj.Positions)*3*4, gl.Ptr(monkeyModelObj.Positions), gl.STATIC_DRAW)
+
+	// gl.BindBuffer(gl.ELEMENT_ARRAY_BUFFER, ebo)
+	// gl.BufferData(gl.ELEMENT_ARRAY_BUFFER, len(indices)*4, gl.Ptr(indices), gl.STATIC_DRAW)
+
+	// vertAttrib := uint32(gl.GetAttribLocation(program, gl.Str("vert\x00")))
+	// gl.EnableVertexAttribArray(vertAttrib)
+	// gl.VertexAttribPointer(vertAttrib, 3, gl.FLOAT, false, 3*4, gl.PtrOffset(0))
+
 	// Configure global settings
-	gl.Enable(gl.DEPTH_TEST)
-	gl.DepthFunc(gl.LESS)
-	gl.ClearColor(0.2, 0.8, 0.8, 1.0)
+	// gl.Enable(gl.DEPTH_TEST)
+	// gl.DepthFunc(gl.LESS)
+	gl.ClearColor(0.0, 1.0, 0.8, 1.0)
+	gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
 
 	running = true
 	for running {
@@ -185,7 +215,20 @@ func main() {
 			}
 		}
 
+		gl.ClearColor(0.0, 1.0, 0.8, 1.0)
+		gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
+
 		// Render
+		// gl.UseProgram(program)
+		// gl.UniformMatrix4fv(modelUniform, 1, false, &model[0])
+
+		// gl.BindVertexArray(vao)
+
+		// // gl.DrawArrays(gl.TRIANGLES, 0, int32(len(monkeyModelObj.Vertices)))
+		// gl.DrawElements(gl.TRIANGLES, int32(len(indices)), gl.UNSIGNED_INT, gl.PtrOffset(0))
+
+		// sdl.GL_SwapWindow(window)
+
 		gl.UseProgram(program)
 		gl.UniformMatrix4fv(modelUniform, 1, false, &model[0])
 
@@ -222,8 +265,58 @@ void main() {
 }
 ` + "\x00"
 
+var cubeVertices = []float32{
+	//  X, Y, Z, U, V
+	// Bottom
+	-1.0, -1.0, -1.0, 0.0, 0.0,
+	1.0, -1.0, -1.0, 1.0, 0.0,
+	-1.0, -1.0, 1.0, 0.0, 1.0,
+	1.0, -1.0, -1.0, 1.0, 0.0,
+	1.0, -1.0, 1.0, 1.0, 1.0,
+	-1.0, -1.0, 1.0, 0.0, 1.0,
+
+	// Top
+	-1.0, 1.0, -1.0, 0.0, 0.0,
+	-1.0, 1.0, 1.0, 0.0, 1.0,
+	1.0, 1.0, -1.0, 1.0, 0.0,
+	1.0, 1.0, -1.0, 1.0, 0.0,
+	-1.0, 1.0, 1.0, 0.0, 1.0,
+	1.0, 1.0, 1.0, 1.0, 1.0,
+
+	// Front
+	-1.0, -1.0, 1.0, 1.0, 0.0,
+	1.0, -1.0, 1.0, 0.0, 0.0,
+	-1.0, 1.0, 1.0, 1.0, 1.0,
+	1.0, -1.0, 1.0, 0.0, 0.0,
+	1.0, 1.0, 1.0, 0.0, 1.0,
+	-1.0, 1.0, 1.0, 1.0, 1.0,
+
+	// Back
+	-1.0, -1.0, -1.0, 0.0, 0.0,
+	-1.0, 1.0, -1.0, 0.0, 1.0,
+	1.0, -1.0, -1.0, 1.0, 0.0,
+	1.0, -1.0, -1.0, 1.0, 0.0,
+	-1.0, 1.0, -1.0, 0.0, 1.0,
+	1.0, 1.0, -1.0, 1.0, 1.0,
+
+	// Left
+	-1.0, -1.0, 1.0, 0.0, 1.0,
+	-1.0, 1.0, -1.0, 1.0, 0.0,
+	-1.0, -1.0, -1.0, 0.0, 0.0,
+	-1.0, -1.0, 1.0, 0.0, 1.0,
+	-1.0, 1.0, 1.0, 1.0, 1.0,
+	-1.0, 1.0, -1.0, 1.0, 0.0,
+
+	// Right
+	1.0, -1.0, 1.0, 1.0, 1.0,
+	1.0, -1.0, -1.0, 1.0, 0.0,
+	1.0, 1.0, -1.0, 0.0, 0.0,
+	1.0, -1.0, 1.0, 1.0, 1.0,
+	1.0, 1.0, -1.0, 0.0, 0.0,
+	1.0, 1.0, 1.0, 0.0, 1.0,
+}
+
 func printBanner() {
-	// http://patorjk.com/software/taag/#p=display&f=Rectangles&t=gomanager
 	fmt.Println()
 	fmt.Printf(`
 	Welcome to
