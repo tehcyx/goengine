@@ -10,22 +10,25 @@ Along the way I want to learn:
 5. ...
 6. networking support for multiplayer
 
+## How to contribute
+
+- Fork the project, add your code & create a pull request.
+- Create an [issue](https://github.com/tehcyx/goengine/issues)
+
+## What does it look like
+![Mesh 01](screenshots/mesh01.png)
+
 # Immediate next tasks
 
 - [X] Meshing
 - [X] OBJ loader
-- [ ] Figure out why the drawing is not working from the Mesh
+- [X] Figure out why the drawing is not working from the Mesh
 - [ ] Change to my window code
 - [ ] Use mouse to rotate camera eventually?
 - [ ] Test if windows binary is still working
 - [ ] MagicaVoxel imports
 
 Look into this: https://github.com/raedatoui/learn-opengl-golang
-
-# How to contribute
-
-- Fork the project, add your code & create a pull request.
-- Create an [issue](https://github.com/tehcyx/goengine/issues)
 
 ### Pre requisites
 
