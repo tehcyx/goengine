@@ -1,9 +1,12 @@
 package mesh
 
 import (
+	"time"
+
 	"github.com/go-gl/gl/v4.1-core/gl"
 	"github.com/go-gl/mathgl/mgl32"
 	"github.com/tehcyx/goengine/obj"
+	"github.com/tehcyx/goengine/util"
 )
 
 const (
@@ -31,7 +34,9 @@ func NewMesh() *Mesh {
 	return m
 }
 
+// NewMeshFromFile creates a new Mesh from specified string path
 func NewMeshFromFile(file string) *Mesh {
+	defer util.TimeTrack(time.Now(), "NewMeshFromFile")
 	m := new(Mesh)
 	// objectModel := obj.NewObjModelFromFile(file)
 	// indexedModel := objectModel.ToIndexedModel()
@@ -41,6 +46,7 @@ func NewMeshFromFile(file string) *Mesh {
 }
 
 func (m *Mesh) create(vertices []Vertex, indices []int) {
+	defer util.TimeTrack(time.Now(), "Mesh create -> init")
 	model := new(obj.IndexedModel)
 
 	for i := 0; i < len(vertices); i++ {
@@ -58,6 +64,7 @@ func (m *Mesh) create(vertices []Vertex, indices []int) {
 }
 
 func (m *Mesh) init(model *obj.IndexedModel) {
+	defer util.TimeTrack(time.Now(), "Mesh init")
 	m.model = model
 
 	gl.GenVertexArrays(1, &m.vao)

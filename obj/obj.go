@@ -6,8 +6,10 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/go-gl/mathgl/mgl32"
+	"github.com/tehcyx/goengine/util"
 )
 
 type ObjectIndex struct {
@@ -31,6 +33,7 @@ type ObjModel struct {
 }
 
 func NewObjModelFromFile(filePath string) *ObjModel {
+	defer util.TimeTrack(time.Now(), "NewObjModelFromFile")
 	o := new(ObjModel)
 
 	fileHandle, _ := os.Open(filePath)
@@ -69,6 +72,7 @@ func NewObjModelFromFile(filePath string) *ObjModel {
 }
 
 func (o *ObjModel) ToIndexedModel() *IndexedModel {
+	defer util.TimeTrack(time.Now(), "ToIndexedModel")
 	result := new(IndexedModel)
 	normalModel := new(IndexedModel)
 

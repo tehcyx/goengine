@@ -5,14 +5,17 @@ import (
 	"os"
 	"runtime"
 	"strings"
+	"time"
 
 	"github.com/go-gl/gl/v4.1-core/gl"
 	"github.com/go-gl/mathgl/mgl32"
 	"github.com/tehcyx/goengine/mesh"
+	"github.com/tehcyx/goengine/util"
 	"gopkg.in/veandco/go-sdl2.v0/sdl"
 )
 
 func newProgram(vertexShaderSource, fragmentShaderSource string) (uint32, error) {
+	defer util.TimeTrack(time.Now(), "newProgram")
 	vertexShader, err := compileShader(vertexShaderSource, gl.VERTEX_SHADER)
 	if err != nil {
 		return 0, err
@@ -48,6 +51,7 @@ func newProgram(vertexShaderSource, fragmentShaderSource string) (uint32, error)
 }
 
 func compileShader(source string, shaderType uint32) (uint32, error) {
+	defer util.TimeTrack(time.Now(), "compileShader")
 	shader := gl.CreateShader(shaderType)
 
 	csources, free := gl.Strs(source)
