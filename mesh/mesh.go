@@ -90,7 +90,8 @@ func (m *Mesh) Draw() {
 	gl.BindVertexArray(m.vao)
 
 	// gl.DrawElements(gl.TRIANGLES, int32(len(m.model.Indices)), gl.UNSIGNED_INT, gl.PtrOffset(0))
-	gl.DrawElementsBaseVertex(gl.TRIANGLES, int32(len(m.model.Indices)), gl.UNSIGNED_INT, gl.PtrOffset(0), 0)
+	gl.DrawElements(gl.TRIANGLES, int32(len(m.model.Indices))/3, gl.UNSIGNED_INT, gl.PtrOffset(0))
+	// gl.DrawElementsBaseVertex(gl.TRIANGLES, int32(len(m.model.Indices)), gl.UNSIGNED_INT, gl.PtrOffset(0), 0)
 
 	gl.BindVertexArray(0)
 }
