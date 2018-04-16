@@ -18,6 +18,17 @@ Along the way I want to learn:
 ## What does it look like
 ![Mesh 01](screenshots/mesh02.png)
 
+## Current timings
+```
+compileShader took              1.735797ms
+compileShader took              198.876µs
+newProgram took                 2.633414ms
+NewMeshFromFile took            9.760546ms
+    NewObjModelFromFile took    7.563693ms
+        ToIndexedModel took     1.624396ms
+            Mesh init took      527.019µs
+```
+
 # Immediate next tasks
 
 - [X] Meshing
