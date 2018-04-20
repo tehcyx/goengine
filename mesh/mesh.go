@@ -24,13 +24,15 @@ type Vertex struct {
 }
 
 type Mesh struct {
-	vao   uint32              // vertex array object
-	vbo   [NUM_BUFFERS]uint32 // vertex buffer object
-	model *obj.IndexedModel
+	vao        uint32              // vertex array object
+	vbo        [NUM_BUFFERS]uint32 // vertex buffer object
+	model      *obj.IndexedModel
+	quickmodel *obj.QuickObjModel
 }
 
-func NewMesh() *Mesh {
+func NewMesh(path string) *Mesh {
 	m := new(Mesh)
+	m.quickInit(obj.LoadObj(path))
 	return m
 }
 
@@ -87,17 +89,68 @@ func (m *Mesh) init(model *obj.IndexedModel) {
 	gl.EnableVertexAttribArray(uint32(NORMAL_VB))
 	gl.VertexAttribPointer(uint32(NORMAL_VB), 3, gl.FLOAT, false, 0, gl.PtrOffset(0))
 
-	gl.BindBuffer(gl.ELEMENT_ARRAY_BUFFER, m.vbo[NORMAL_VB])
+	gl.BindBuffer(gl.ELEMENT_ARRAY_BUFFER, m.vbo[INDEX_VB])
 	gl.BufferData(gl.ELEMENT_ARRAY_BUFFER, len(m.model.Indices)*3*4, gl.Ptr(m.model.Indices), gl.STATIC_DRAW)
 
 	gl.BindVertexArray(0)
 }
 
+func (m *Mesh) quickInit(model *obj.QuickObjModel) {
+	defer util.TimeTrack(time.Now(), "Mesh quickInit")
+	m.quickmodel = model
+
+	gl.GenVertexArrays(1, &m.vao)
+	gl.BindVertexArray(m.vao)
+
+	gl.GenBuffers(int32(NUM_BUFFERS), &m.vbo[0])
+
+	gl.BindBuffer(gl.ARRAY_BUFFER, m.vbo[POSITION_VB])
+	gl.BufferData(gl.ARRAY_BUFFER, len(m.quickmodel.Vertices)*3*4, gl.Ptr(m.quickmodel.Vertices), gl.STATIC_DRAW) // *4 because  float32 is 4 bytes
+	gl.EnableVertexAttribArray(uint32(POSITION_VB))
+	gl.VertexAttribPointer(uint32(POSITION_VB), 3, gl.FLOAT, false, 0, gl.PtrOffset(0))
+
+	if len(m.quickmodel.UVs) > 0 {
+		gl.BindBuffer(gl.ARRAY_BUFFER, m.vbo[TEXCOORD_VB])
+		gl.BufferData(gl.ARRAY_BUFFER, len(m.quickmodel.UVs)*2*4, gl.Ptr(m.quickmodel.UVs), gl.STATIC_DRAW)
+		gl.EnableVertexAttribArray(uint32(TEXCOORD_VB))
+		gl.VertexAttribPointer(uint32(TEXCOORD_VB), 2, gl.FLOAT, false, 0, gl.PtrOffset(0))
+	}
+
+	if len(m.quickmodel.Normals) > 0 {
+		gl.BindBuffer(gl.ARRAY_BUFFER, m.vbo[NORMAL_VB])
+		gl.BufferData(gl.ARRAY_BUFFER, len(m.quickmodel.Normals)*3*4, gl.Ptr(m.quickmodel.Normals), gl.STATIC_DRAW)
+		gl.EnableVertexAttribArray(uint32(NORMAL_VB))
+		gl.VertexAttribPointer(uint32(NORMAL_VB), 3, gl.FLOAT, false, 0, gl.PtrOffset(0))
+	}
+
+	gl.BindVertexArray(0)
+}
+
 func (m *Mesh) Draw() {
+	if m.quickmodel != nil {
+		m.DrawNew()
+	} else {
+		m.DrawOld()
+	}
+}
+
+func (m *Mesh) DrawOld() {
+	// defer util.TimeTrack(time.Now(), "mesh draw")
 	gl.BindVertexArray(m.vao)
 
 	// gl.DrawElements(gl.TRIANGLES, int32(len(m.model.Indices)), gl.UNSIGNED_INT, gl.PtrOffset(0))
 	gl.DrawElements(gl.TRIANGLES, int32(len(m.model.Indices))*3, gl.UNSIGNED_INT, gl.PtrOffset(0))
+	// gl.DrawElementsBaseVertex(gl.TRIANGLES, int32(len(m.model.Indices)), gl.UNSIGNED_INT, gl.PtrOffset(0), 0)
+
+	gl.BindVertexArray(0)
+}
+
+func (m *Mesh) DrawNew() {
+	// defer util.TimeTrack(time.Now(), "mesh quickdraw")
+	gl.BindVertexArray(m.vao)
+
+	// gl.DrawElements(gl.TRIANGLES, int32(len(m.model.Indices)), gl.UNSIGNED_INT, gl.PtrOffset(0))
+	gl.DrawArrays(gl.TRIANGLES, 0, int32(len(m.quickmodel.Vertices))*3)
 	// gl.DrawElementsBaseVertex(gl.TRIANGLES, int32(len(m.model.Indices)), gl.UNSIGNED_INT, gl.PtrOffset(0), 0)
 
 	gl.BindVertexArray(0)

@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/andrebq/assimp/conv"
 	"github.com/go-gl/gl/v4.1-core/gl"
 	"github.com/go-gl/mathgl/mgl32"
 	"github.com/tehcyx/goengine/mesh"
@@ -86,6 +87,8 @@ func main() {
 
 	// printBanner()
 
+	srcFilepath := "res/models/monkey.obj"
+
 	var window *sdl.Window
 	var context sdl.GLContext
 	var event sdl.Event
@@ -156,40 +159,20 @@ func main() {
 
 	gl.BindFragDataLocation(program, 0, gl.Str("outputColor\x00"))
 
-	monkeyModel := mesh.NewMeshFromFile("res/models/monkey.obj")
+	monkeyModel := mesh.NewMeshFromFile(srcFilepath)
+	// monkeyModel := mesh.NewMesh("res/models/monkey.obj")
 
-	// // Configure the vertex data
-	// var vao uint32
-	// gl.GenVertexArrays(1, &vao)
-	// gl.BindVertexArray(vao)
-
-	// // monkeyModelObj := obj.NewObjModelFromFile("res/models/monkey.obj")
-	// monkeyModelObj := obj.NewObjModelFromFile("res/models/monkey.obj").ToIndexedModel()
-
-	// var indices []int
-	// for i := 0; i < len(monkeyModelObj.Indices); i++ {
-	// 	// indices = append(indices, monkeyModelObj.Indices[i].VertexIndex)
-	// 	indices = append(indices, monkeyModelObj.Indices[i])
-	// }
-
-	// var vbo uint32
-	// var ebo uint32
-	// gl.GenBuffers(1, &vbo)
-	// gl.GenBuffers(1, &ebo)
-	// gl.BindBuffer(gl.ARRAY_BUFFER, vbo)
-	// // gl.BufferData(gl.ARRAY_BUFFER, len(monkeyModelObj.Vertices)*3*4, gl.Ptr(monkeyModelObj.Vertices), gl.STATIC_DRAW)
-	// gl.BufferData(gl.ARRAY_BUFFER, len(monkeyModelObj.Positions)*3*4, gl.Ptr(monkeyModelObj.Positions), gl.STATIC_DRAW)
-
-	// gl.BindBuffer(gl.ELEMENT_ARRAY_BUFFER, ebo)
-	// gl.BufferData(gl.ELEMENT_ARRAY_BUFFER, len(indices)*4, gl.Ptr(indices), gl.STATIC_DRAW)
-
-	// vertAttrib := uint32(gl.GetAttribLocation(program, gl.Str("vert\x00")))
-	// gl.EnableVertexAttribArray(vertAttrib)
-	// gl.VertexAttribPointer(vertAttrib, 3, gl.FLOAT, false, 3*4, gl.PtrOffset(0))
+	scene, err := conv.LoadAsset(srcFilepath)
+	if err != nil {
+		panic(err)
+	}
+	scene.Mesh[0].Id()
 
 	// Configure global settings
 	// gl.Enable(gl.DEPTH_TEST)
-	// gl.DepthFunc(gl.LESS))
+	// gl.DepthFunc(gl.LESS)
+
+	// gl.Enable(gl.CULL_FACE)
 
 	gl.ClearColor(0.0, 1.0, 0.8, 1.0)
 	gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
@@ -222,17 +205,6 @@ func main() {
 
 		gl.ClearColor(0.0, 1.0, 0.8, 1.0)
 		gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
-
-		// Render
-		// gl.UseProgram(program)
-		// gl.UniformMatrix4fv(modelUniform, 1, false, &model[0])
-
-		// gl.BindVertexArray(vao)
-
-		// // gl.DrawArrays(gl.TRIANGLES, 0, int32(len(monkeyModelObj.Vertices)))
-		// gl.DrawElements(gl.TRIANGLES, int32(len(indices)), gl.UNSIGNED_INT, gl.PtrOffset(0))
-
-		// sdl.GL_SwapWindow(window)
 
 		gl.UseProgram(program)
 		gl.UniformMatrix4fv(modelUniform, 1, false, &model[0])
@@ -269,57 +241,6 @@ void main() {
     outputColor = vec4(0.3, 0.5, 0.8, 1.0);
 }
 ` + "\x00"
-
-// var cubeVertices = []float32{
-// 	//  X, Y, Z, U, V
-// 	// Bottom
-// 	-1.0, -1.0, -1.0, 0.0, 0.0,
-// 	1.0, -1.0, -1.0, 1.0, 0.0,
-// 	-1.0, -1.0, 1.0, 0.0, 1.0,
-// 	1.0, -1.0, -1.0, 1.0, 0.0,
-// 	1.0, -1.0, 1.0, 1.0, 1.0,
-// 	-1.0, -1.0, 1.0, 0.0, 1.0,
-
-// 	// Top
-// 	-1.0, 1.0, -1.0, 0.0, 0.0,
-// 	-1.0, 1.0, 1.0, 0.0, 1.0,
-// 	1.0, 1.0, -1.0, 1.0, 0.0,
-// 	1.0, 1.0, -1.0, 1.0, 0.0,
-// 	-1.0, 1.0, 1.0, 0.0, 1.0,
-// 	1.0, 1.0, 1.0, 1.0, 1.0,
-
-// 	// Front
-// 	-1.0, -1.0, 1.0, 1.0, 0.0,
-// 	1.0, -1.0, 1.0, 0.0, 0.0,
-// 	-1.0, 1.0, 1.0, 1.0, 1.0,
-// 	1.0, -1.0, 1.0, 0.0, 0.0,
-// 	1.0, 1.0, 1.0, 0.0, 1.0,
-// 	-1.0, 1.0, 1.0, 1.0, 1.0,
-
-// 	// Back
-// 	-1.0, -1.0, -1.0, 0.0, 0.0,
-// 	-1.0, 1.0, -1.0, 0.0, 1.0,
-// 	1.0, -1.0, -1.0, 1.0, 0.0,
-// 	1.0, -1.0, -1.0, 1.0, 0.0,
-// 	-1.0, 1.0, -1.0, 0.0, 1.0,
-// 	1.0, 1.0, -1.0, 1.0, 1.0,
-
-// 	// Left
-// 	-1.0, -1.0, 1.0, 0.0, 1.0,
-// 	-1.0, 1.0, -1.0, 1.0, 0.0,
-// 	-1.0, -1.0, -1.0, 0.0, 0.0,
-// 	-1.0, -1.0, 1.0, 0.0, 1.0,
-// 	-1.0, 1.0, 1.0, 1.0, 1.0,
-// 	-1.0, 1.0, -1.0, 1.0, 0.0,
-
-// 	// Right
-// 	1.0, -1.0, 1.0, 1.0, 1.0,
-// 	1.0, -1.0, -1.0, 1.0, 0.0,
-// 	1.0, 1.0, -1.0, 0.0, 0.0,
-// 	1.0, -1.0, 1.0, 1.0, 1.0,
-// 	1.0, 1.0, -1.0, 0.0, 0.0,
-// 	1.0, 1.0, 1.0, 0.0, 1.0,
-// }
 
 func printBanner() {
 	fmt.Println()

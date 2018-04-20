@@ -40,6 +40,10 @@ func NewObjModelFromFile(filePath string) *ObjModel {
 	defer fileHandle.Close()
 	fileScanner := bufio.NewScanner(fileHandle)
 
+	o.Vertices = append(o.Vertices, mgl32.Vec3{0.0, 0.0, 0.0}) // override zero index, because it's not used
+	o.Normals = append(o.Normals, mgl32.Vec3{0.0, 0.0, 0.0})   // override zero index, because it's not used
+	o.UVs = append(o.UVs, mgl32.Vec2{0.0, 0.0})                // override zero index, because it's not used
+
 	for fileScanner.Scan() {
 		line := fileScanner.Text()
 		var lineType string
@@ -92,18 +96,18 @@ func (o *ObjModel) ToIndexedModel() *IndexedModel {
 
 	for i := 0; i < len(o.Indices); i++ {
 		currentIndex := o.Indices[i]
-		currentPosition := o.Vertices[currentIndex.VertexIndex-1]
+		currentPosition := o.Vertices[currentIndex.VertexIndex]
 		var currentTexCoord mgl32.Vec2
 		var currentNormal mgl32.Vec3
 
 		if o.HasUVs() {
-			currentTexCoord = o.UVs[currentIndex.UVIndex-1]
+			currentTexCoord = o.UVs[currentIndex.UVIndex]
 		} else {
 			currentTexCoord = mgl32.Vec2{0.0, 0.0}
 		}
 
 		if o.HasNormals() {
-			currentNormal = o.Normals[currentIndex.NormalIndex-1]
+			currentNormal = o.Normals[currentIndex.NormalIndex]
 		} else {
 			currentNormal = mgl32.Vec3{0.0, 0.0, 0.0}
 		}
@@ -228,14 +232,14 @@ func (o *ObjModel) findLastVertexIndex(indexLookup []ObjectIndex, currentIndex O
 }
 
 func (o *ObjModel) HasUVs() bool {
-	if len(o.UVs) > 0 {
+	if len(o.UVs) > 1 { // > 1 because indexes start with 1 rather than 0
 		return true
 	}
 	return false
 }
 
 func (o *ObjModel) HasNormals() bool {
-	if len(o.Normals) > 0 {
+	if len(o.Normals) > 1 { // > 1 because indexes start with 1 rather than 0
 		return true
 	}
 	return false
@@ -244,14 +248,14 @@ func (o *ObjModel) HasNormals() bool {
 func (o *ObjModel) CreateFace(line string) {
 	tokens := strings.Split(line, " ")
 
-	o.Indices = append(o.Indices, o.parseIndex(tokens[1]))
-	o.Indices = append(o.Indices, o.parseIndex(tokens[2]))
-	o.Indices = append(o.Indices, o.parseIndex(tokens[3]))
+	o.Indices = append(o.Indices, parseIndex(tokens[1]))
+	o.Indices = append(o.Indices, parseIndex(tokens[2]))
+	o.Indices = append(o.Indices, parseIndex(tokens[3]))
 
 	if len(tokens) > 4 {
-		o.Indices = append(o.Indices, o.parseIndex(tokens[1]))
-		o.Indices = append(o.Indices, o.parseIndex(tokens[3]))
-		o.Indices = append(o.Indices, o.parseIndex(tokens[4]))
+		o.Indices = append(o.Indices, parseIndex(tokens[1]))
+		o.Indices = append(o.Indices, parseIndex(tokens[3]))
+		o.Indices = append(o.Indices, parseIndex(tokens[4]))
 	}
 }
 
@@ -272,7 +276,7 @@ func parseVec3(line string) mgl32.Vec3 {
 	return mgl32.Vec3{x, y, z}
 }
 
-func (o *ObjModel) parseIndex(token string) ObjectIndex {
+func parseIndex(token string) ObjectIndex {
 	var result ObjectIndex
 
 	tokens := strings.Split(token, "/")

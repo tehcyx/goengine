@@ -1,5 +1,4 @@
 # goengine
-golang voxel engine
 
 The goal here is to create a graphics engine in the style of minecraft, with total control of terrain generation. For starters the goal currently is not to have destructible terrain. It should be usable as a basis for participation in GameJams.
 Along the way I want to learn:
@@ -16,17 +15,19 @@ Along the way I want to learn:
 - Create an [issue](https://github.com/tehcyx/goengine/issues)
 
 ## What does it look like
+
 ![Mesh 01](screenshots/mesh02.png)
 
 ## Current timings
+
 ```
-compileShader took              1.735797ms
-compileShader took              198.876µs
-newProgram took                 2.633414ms
-NewMeshFromFile took            9.760546ms
-    NewObjModelFromFile took    7.563693ms
-        ToIndexedModel took     1.624396ms
-            Mesh init took      527.019µs
+compileShader took              4.465966ms
+compileShader took              269.372µs
+newProgram took                 6.134061ms
+NewMeshFromFile took            12.344038ms
+    NewObjModelFromFile took    10.254944ms
+        ToIndexedModel took     1.53439ms
+            Mesh init took      509.496µs
 ```
 
 # Immediate next tasks
@@ -39,7 +40,9 @@ NewMeshFromFile took            9.760546ms
 - [ ] Test if windows binary is still working
 - [ ] MagicaVoxel imports
 
-Look into this: https://github.com/raedatoui/learn-opengl-golang
+Look into this: 
+- https://github.com/raedatoui/learn-opengl-golang
+- http://www.opengl-tutorial.org/beginners-tutorials/
 
 ### Pre requisites
 
@@ -66,3 +69,7 @@ Look into this: https://github.com/raedatoui/learn-opengl-golang
 ## Cross compile MacOs to Linux
 
 ...
+
+## Links
+
+- [The Stanford 3D Scanning Repository](http://graphics.stanford.edu/data/3Dscanrep/)
