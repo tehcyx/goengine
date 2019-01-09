@@ -100,16 +100,16 @@ func main() {
 	}
 	defer sdl.Quit()
 
-	sdl.GL_SetAttribute(sdl.GL_CONTEXT_PROFILE_MASK, sdl.GL_CONTEXT_PROFILE_CORE)
-	sdl.GL_SetAttribute(sdl.GL_CONTEXT_MAJOR_VERSION, 3)
-	sdl.GL_SetAttribute(sdl.GL_CONTEXT_MINOR_VERSION, 3)
+	sdl.GLSetAttribute(sdl.GL_CONTEXT_PROFILE_MASK, sdl.GL_CONTEXT_PROFILE_CORE)
+	sdl.GLSetAttribute(sdl.GL_CONTEXT_MAJOR_VERSION, 3)
+	sdl.GLSetAttribute(sdl.GL_CONTEXT_MINOR_VERSION, 3)
 
-	sdl.GL_SetAttribute(sdl.GL_RED_SIZE, 8)
-	sdl.GL_SetAttribute(sdl.GL_GREEN_SIZE, 8)
-	sdl.GL_SetAttribute(sdl.GL_BLUE_SIZE, 8)
-	sdl.GL_SetAttribute(sdl.GL_ALPHA_SIZE, 8)
-	sdl.GL_SetAttribute(sdl.GL_BUFFER_SIZE, 32)
-	sdl.GL_SetAttribute(sdl.GL_DOUBLEBUFFER, 1)
+	sdl.GLSetAttribute(sdl.GL_RED_SIZE, 8)
+	sdl.GLSetAttribute(sdl.GL_GREEN_SIZE, 8)
+	sdl.GLSetAttribute(sdl.GL_BLUE_SIZE, 8)
+	sdl.GLSetAttribute(sdl.GL_ALPHA_SIZE, 8)
+	sdl.GLSetAttribute(sdl.GL_BUFFER_SIZE, 32)
+	sdl.GLSetAttribute(sdl.GL_DOUBLEBUFFER, 1)
 
 	window, err = sdl.CreateWindow(winTitle, sdl.WINDOWPOS_UNDEFINED,
 		sdl.WINDOWPOS_UNDEFINED,
@@ -119,12 +119,12 @@ func main() {
 		panic(err)
 	}
 	defer window.Destroy()
-	context, err = sdl.GL_CreateContext(window)
+	context, err = window.GLCreateContext()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Failed to create context: %s\n", err)
 		panic(err)
 	}
-	defer sdl.GL_DeleteContext(context)
+	defer sdl.GLDeleteContext(context)
 
 	// Initialize gl
 	if err := gl.Init(); err != nil {
@@ -183,7 +183,7 @@ func main() {
 			switch t := event.(type) {
 			case *sdl.QuitEvent:
 				running = false
-			case *sdl.KeyUpEvent:
+			case *sdl.KeyboardEvent:
 				if t.Keysym.Sym == sdl.K_ESCAPE {
 					running = false
 				}
@@ -211,7 +211,7 @@ func main() {
 
 		monkeyModel.Draw()
 
-		sdl.GL_SwapWindow(window)
+		window.GLSwap()
 	}
 }
 

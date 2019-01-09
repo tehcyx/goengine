@@ -16,13 +16,13 @@ type Window struct {
 }
 
 // NewWindow Creates a new window and returns a struct with the necessary accessors to handle the window
-func NewWindow(winHeight, winWidth int, title string) *Window {
+func NewWindow(winHeight, winWidth int32, title string) *Window {
 	w := new(Window)
 	w.create(winHeight, winWidth, title)
 	return w
 }
 
-func (w *Window) create(winHeight, winWidth int, title string) {
+func (w *Window) create(winHeight, winWidth int32, title string) {
 	var err error
 	w.isClosed = false
 	if err = sdl.Init(sdl.INIT_EVERYTHING); err != nil {
@@ -30,32 +30,30 @@ func (w *Window) create(winHeight, winWidth int, title string) {
 	}
 	defer sdl.Quit()
 
-	sdl.GL_SetAttribute(sdl.GL_CONTEXT_PROFILE_MASK, sdl.GL_CONTEXT_PROFILE_CORE)
-	sdl.GL_SetAttribute(sdl.GL_CONTEXT_MAJOR_VERSION, 3)
-	sdl.GL_SetAttribute(sdl.GL_CONTEXT_MINOR_VERSION, 3)
+	sdl.GLSetAttribute(sdl.GL_CONTEXT_PROFILE_MASK, sdl.GL_CONTEXT_PROFILE_CORE)
+	sdl.GLSetAttribute(sdl.GL_CONTEXT_MAJOR_VERSION, 3)
+	sdl.GLSetAttribute(sdl.GL_CONTEXT_MINOR_VERSION, 3)
 
-	sdl.GL_SetAttribute(sdl.GL_RED_SIZE, 8)
-	sdl.GL_SetAttribute(sdl.GL_GREEN_SIZE, 8)
-	sdl.GL_SetAttribute(sdl.GL_BLUE_SIZE, 8)
-	sdl.GL_SetAttribute(sdl.GL_ALPHA_SIZE, 8)
-	sdl.GL_SetAttribute(sdl.GL_BUFFER_SIZE, 32)
-	sdl.GL_SetAttribute(sdl.GL_DOUBLEBUFFER, 1)
+	sdl.GLSetAttribute(sdl.GL_RED_SIZE, 8)
+	sdl.GLSetAttribute(sdl.GL_GREEN_SIZE, 8)
+	sdl.GLSetAttribute(sdl.GL_BLUE_SIZE, 8)
+	sdl.GLSetAttribute(sdl.GL_ALPHA_SIZE, 8)
+	sdl.GLSetAttribute(sdl.GL_BUFFER_SIZE, 32)
+	sdl.GLSetAttribute(sdl.GL_DOUBLEBUFFER, 1)
 
-	w.window, err = sdl.CreateWindow(title, sdl.WINDOWPOS_UNDEFINED,
-		sdl.WINDOWPOS_UNDEFINED,
-		winWidth, winHeight, sdl.WINDOW_OPENGL)
+	w.window, err = sdl.CreateWindow(title, sdl.WINDOWPOS_CENTERED, sdl.WINDOWPOS_CENTERED, winWidth, winHeight, sdl.WINDOW_OPENGL)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Failed to create window: %s\n", err)
 		panic(err)
 	}
 	defer w.window.Destroy()
 
-	w.context, err = sdl.GL_CreateContext(w.window)
+	w.context, err = w.window.GLCreateContext()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Failed to create context: %s\n", err)
 		panic(err)
 	}
-	defer sdl.GL_DeleteContext(w.context)
+	defer sdl.GLDeleteContext(w.context)
 
 	// Initialize gl
 	if err := gl.Init(); err != nil {
@@ -73,13 +71,14 @@ func (w *Window) Clear(red, green, blue, alpha float32) {
 
 // Update window content
 func (w *Window) Update() {
-	sdl.GL_SwapWindow(w.window)
+	// sdl.GL_SwapWindow(w.window)
+	w.window.GLSwap() // is that right???
 
 	for w.event = sdl.PollEvent(); w.event != nil; w.event = sdl.PollEvent() {
 		switch t := w.event.(type) {
 		case *sdl.QuitEvent:
 			w.isClosed = false
-		case *sdl.KeyUpEvent:
+		case *sdl.KeyboardEvent:
 			if t.Keysym.Sym == sdl.K_ESCAPE {
 				w.isClosed = false
 			}
